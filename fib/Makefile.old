@@ -1,0 +1,10 @@
+TOOLSBIN=/local/ecad/riscv/bin
+CC=$(TOOLSBIN)/riscv32-unknown-elf-gcc
+CCOPT=-O1
+SRC=fib.c
+
+fib:	$(SRC)
+	$(CC) $(CCOPT) -o fib $(SRC)
+
+fib.s:	$(SRC)
+	$(CC) $(CCOPT) -S -o fib.s $(SRC)

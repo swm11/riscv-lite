@@ -1,0 +1,65 @@
+
+build/fib.elf:     file format elf32-littleriscv
+
+Contents of section .text.init:
+ 0000 17010100 130101fe 97020000 9382c200  ................
+ 0010 ef008005 6f000000                    ....o...        
+Contents of section .text:
+ 0018 93071000 63e6a700 13051000 67800000  ....c.......g...
+ 0028 130101ff 23261100 23248100 23229100  ....#&..#$..#"..
+ 0038 13040500 1305f5ff eff09ffd 93040500  ................
+ 0048 1305e4ff eff0dffc 3385a400 8320c100  ........3.... ..
+ 0058 03248100 83244100 13010101 67800000  .$...$A.....g...
+ 0068 130101ff 23261100 1305a000 eff05ffa  ....#&........_.
+ 0078 8320c100 13010101 67800000           . ......g...    
+Contents of section .riscv.attributes:
+ 0000 41190000 00726973 63760001 0f000000  A....riscv......
+ 0010 05727633 32693270 3000               .rv32i2p0.      
+Contents of section .comment:
+ 0000 4743433a 2028474e 55292038 2e322e30  GCC: (GNU) 8.2.0
+ 0010 00                                   .               
+
+Disassembly of section .text.init:
+
+00000000 <entry>:
+   0:	00010117          	auipc	sp,0x10
+   4:	fe010113          	addi	sp,sp,-32 # ffe0 <main+0xff78>
+   8:	00000297          	auipc	t0,0x0
+   c:	00c28293          	addi	t0,t0,12 # 14 <end>
+  10:	058000ef          	jal	ra,68 <main>
+
+00000014 <end>:
+  14:	0000006f          	j	14 <end>
+
+Disassembly of section .text:
+
+00000018 <fib>:
+  18:	00100793          	li	a5,1
+  1c:	00a7e663          	bltu	a5,a0,28 <fib+0x10>
+  20:	00100513          	li	a0,1
+  24:	00008067          	ret
+  28:	ff010113          	addi	sp,sp,-16
+  2c:	00112623          	sw	ra,12(sp)
+  30:	00812423          	sw	s0,8(sp)
+  34:	00912223          	sw	s1,4(sp)
+  38:	00050413          	mv	s0,a0
+  3c:	fff50513          	addi	a0,a0,-1
+  40:	fd9ff0ef          	jal	ra,18 <fib>
+  44:	00050493          	mv	s1,a0
+  48:	ffe40513          	addi	a0,s0,-2
+  4c:	fcdff0ef          	jal	ra,18 <fib>
+  50:	00a48533          	add	a0,s1,a0
+  54:	00c12083          	lw	ra,12(sp)
+  58:	00812403          	lw	s0,8(sp)
+  5c:	00412483          	lw	s1,4(sp)
+  60:	01010113          	addi	sp,sp,16
+  64:	00008067          	ret
+
+00000068 <main>:
+  68:	ff010113          	addi	sp,sp,-16
+  6c:	00112623          	sw	ra,12(sp)
+  70:	00a00513          	li	a0,10
+  74:	fa5ff0ef          	jal	ra,18 <fib>
+  78:	00c12083          	lw	ra,12(sp)
+  7c:	01010113          	addi	sp,sp,16
+  80:	00008067          	ret

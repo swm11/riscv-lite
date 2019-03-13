@@ -1,0 +1,8 @@
+* GCC toolchain
+
+Download from github using instructions from:
+https://riscv.org/software-tools/risc-v-gnu-compiler-toolchain/
+
+Configure tool build for 32-bit integer only (no mul/div, atomics, float, etc.):
+./configure --prefix=/local/ecad/riscv --with-arch=rv32i --with-abi=ilp32
+

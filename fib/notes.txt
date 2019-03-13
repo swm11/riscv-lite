@@ -1,0 +1,22 @@
+Instructions used:
+
+Arith:
+auipc
+addi
+li
+mv
+
+Branch:
+jal
+bltu
+ret - pseudonym for jalr where rd=0, rs=ra=x1? imm=0
+j - pseudonym for jal where rd=zero?
+
+Mem:
+sw
+lw
+
+
+Remove from init.s?
+csrw
+ecall
