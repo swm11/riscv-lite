@@ -64,6 +64,7 @@ class processor
     private decodedInst decode(int inst)
     {
 	decodedInst d = new decodedInst();
+	// Decode the fixed fields even if they are not needed for a particular instruction
 	d.opcode = bitextract.bitExtractByte(inst,0,6);
 	d.rd = bitextract.bitExtractByte(inst,7,11);
 	d.rs1 = bitextract.bitExtractByte(inst,15,19);
@@ -145,40 +146,43 @@ class processor
     public executeState executeStep()
     {
 	decodedInst d;
-	
-	archst.pc = archst.nextpc;  // move onto the next pc
-	archst.rf[0] = 0; // ensure register zero is always 0
-	d = decode(this.mem.load(archst.pc)); // fetch and decode instruction
+	// Move onto the next pc	
+	archst.pc = archst.nextpc;
+	// Ensure register zero is always 0
+	archst.rf[0] = 0;
+	// Fetch and decode instruction
+	d = decode(this.mem.load(archst.pc)); 
+	// By default the nextpc is the next instruction
 	archst.nextpc = archst.pc+4;
 	switch(d.inst) {
-	case ADD:
+	case ADD:    // add two registers
 	    archst.rf[d.rd] = archst.rf[d.rs1] + archst.rf[d.rs2];
 	    break;
-	case ADDI:
+	case ADDI:   // add a register and an immediate (i.e. a constant)
 	    archst.rf[d.rd] = archst.rf[d.rs1] + d.imm;
 	    break;
-	case AUIPC:
+	case AUIPC:  // program counter relative immediate
 	    archst.rf[d.rd] = archst.pc + d.imm;
 	    break;
-	case LUI:
+	case LUI:    // load upper immediate
 	    archst.rf[d.rd] = d.imm;
 	    break;
-	case BLT:
+	case BLT:    // branch less than
 	    if(archst.rf[d.rs1] < archst.rf[d.rs2])
 		archst.nextpc = archst.pc + d.imm;
 	    break;
-	case JAL:
+	case JAL:    // jump and link (pc + immediate)
 	    archst.nextpc = archst.pc + d.imm;
 	    archst.rf[1] = archst.pc+4; // x1 = ra (return address)
 	    break;
-	case JALR:
+	case JALR:   // jump and link (register + immediate)
 	    archst.nextpc = archst.rf[d.rs1] + d.imm;
 	    archst.rf[1] = archst.pc+4; // x1 = ra (return address)
 	    break;
-	case LW:
+	case LW:     // load word
 	    archst.rf[d.rd] = this.mem.load(archst.rf[d.rs1] + d.imm);
 	    break;
-	case SW:
+	case SW:     // store word
 	    this.mem.store(archst.rf[d.rs1] + d.imm, archst.rf[d.rs2]);
 	    break;
 	default:
