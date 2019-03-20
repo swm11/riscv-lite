@@ -39,7 +39,7 @@ class memory
 	    to = mem.length-1;
 	for(int a=to; a<=from; a++)
 	    System.out.format("mem[0x%08x] = 0x%08x = %d\n",
-			      a, this.mem[a], this.mem[a]);
+			      a*4, this.mem[a], this.mem[a]);
     }
     
     public void memory(int memsizebytes, String filepath) throws IOException
@@ -52,21 +52,12 @@ class memory
 	}
 	// load binary image into the memory
         byte [] b = Files.readAllBytes(Paths.get(filepath));
+	// copy bytes from byte buffer into our word-sized mem[] array
 	for(int a=0; (a<this.mem.length) && ((a*4+3)<b.length); a++) {
-	    this.mem[a] = (b[a*4+3]<<24)
-		        | (b[a*4+2]<<16)
-    		        | (b[a*4+1]<< 8)
-		        | (b[a*4+0]);
+	    this.mem[a] = ((b[a*4+3] & 0xff)<<24)
+		        | ((b[a*4+2] & 0xff)<<16)
+    		        | ((b[a*4+1] & 0xff)<< 8)
+		        | ((b[a*4+0] & 0xff));
 	}
-	/*
-	File file = new File(filepath);
-	if(file.length() < this.memsizewords*4) {
-	    DataInputStream dis = new DataInputStream(new FileInputStream(file));
-	    dis.readFully(this.mem);
-	    dis.close();
-	} else {
-	    println("Insufficient space to read file");
-	}
-	*/
     } 
 }
