@@ -7,6 +7,28 @@ class memory
 {
     private int mem[];
 
+    // initialise a memory of a given size with a binary image from a file
+    public void memory(int memsizebytes, String filepath) throws IOException
+    {
+	// initialise the memory
+	int memsizewords = memsizebytes/4;
+	this.mem = new int [memsizewords];
+	for(int a=0; a<memsizewords; a++) {
+	    this.mem[a] = 0;
+	}
+	System.out.format("Memory size = %d words = %d bytes = %d KiB\n",
+			  this.mem.length, this.mem.length*4, this.mem.length*4/1024);
+	// load binary image into the memory
+        byte [] b = Files.readAllBytes(Paths.get(filepath));
+	// copy bytes from byte buffer into our word-sized mem[] array
+	for(int a=0; (a<this.mem.length) && ((a*4+3)<b.length); a++) {
+	    this.mem[a] = ((b[a*4+3] & 0xff)<<24)
+		        | ((b[a*4+2] & 0xff)<<16)
+    		        | ((b[a*4+1] & 0xff)<< 8)
+		        | ((b[a*4+0] & 0xff));
+	}
+    } 
+
     private boolean checkValidAddress(int byteaddress)
     {
 	boolean valid;                            // check:
@@ -54,24 +76,4 @@ class memory
 			      a*4, this.mem[a], this.mem[a]);
     }
     
-    public void memory(int memsizebytes, String filepath) throws IOException
-    {
-	// initialise the memory
-	int memsizewords = memsizebytes/4;
-	this.mem = new int [memsizewords];
-	for(int a=0; a<memsizewords; a++) {
-	    this.mem[a] = 0;
-	}
-	System.out.format("Memory size = %d words = %d bytes = %d KiB\n",
-			  this.mem.length, this.mem.length*4, this.mem.length*4/1024);
-	// load binary image into the memory
-        byte [] b = Files.readAllBytes(Paths.get(filepath));
-	// copy bytes from byte buffer into our word-sized mem[] array
-	for(int a=0; (a<this.mem.length) && ((a*4+3)<b.length); a++) {
-	    this.mem[a] = ((b[a*4+3] & 0xff)<<24)
-		        | ((b[a*4+2] & 0xff)<<16)
-    		        | ((b[a*4+1] & 0xff)<< 8)
-		        | ((b[a*4+0] & 0xff));
-	}
-    } 
 }
