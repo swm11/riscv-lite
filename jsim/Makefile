@@ -10,7 +10,7 @@ J_CLASS = $(J_CLASS_FLAG) $(J_CLASS_PATH)
 # Flag for source path
 J_SOURCE_FLAG = -sourcepath
 # Specify the path where are the source files .java
-J_SOURCE_PATH = ./src/
+J_SOURCE_PATH = ./src
 # Specify where are the source files .java
 J_SOURCE = $(J_SOURCE_FLAG) $(J_SOURCE_PATH)
 # Top class
@@ -20,15 +20,19 @@ J_TOP = jsim
 SRC = $(wildcard $(J_SOURCE_PATH)/*.java)
 
 # Création des fichiers .class correspondant
-OBJ = $(SRC:.java=.class)
-
+# TMP = $(SRC:.java=.class)
+# OBJ = $(TMP:$(J_SOURCE_PATH)=$(J_CLASS_PATH))
+OBJ = $(patsubst $(J_SOURCE_PATH)/%.java,$(J_CLASS_PATH)/%.class,$(SRC))
 JC = javac
 
 JAVAC_COMPILE = $(JC) $(J_SOURCE) $(J_CLASS)
 
 default: bin $(OBJ)
 
-%.class: %.java
+run: bin $(OBJ)
+	java --class-path $(J_CLASS_PATH) $(J_TOP)
+
+$(J_CLASS_PATH)/%.class: %.java
 	$(JAVAC_COMPILE) $*.java
 
 bin: 
@@ -39,7 +43,4 @@ clean:
 
 fullclean : clean
 	rmdir $(J_CLASS_PATH)
-
-run: bin $(OBJ)
-	java --class-path $(J_CLASS_PATH) $(J_TOP)
 
