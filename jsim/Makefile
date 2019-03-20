@@ -32,8 +32,8 @@ default: bin $(OBJ)
 run: bin $(OBJ)
 	java --class-path $(J_CLASS_PATH) $(J_TOP)
 
-$(J_CLASS_PATH)/%.class: %.java
-	$(JAVAC_COMPILE) $*.java
+$(J_CLASS_PATH)/%.class: $(J_SOURCE_PATH)/%.java
+	$(JAVAC_COMPILE) $(J_SOURCE_PATH)/$*.java
 
 bin: 
 	@mkdir -p $(J_CLASS_PATH)
@@ -41,6 +41,9 @@ bin:
 clean:
 	rm -Rfv $(J_CLASS_PATH)/*
 
-fullclean : clean
+fullclean: clean
 	rmdir $(J_CLASS_PATH)
 
+debugmakefile:
+	@echo SRC = $(SRC)
+	@echo OBJ = $(OBJ)
