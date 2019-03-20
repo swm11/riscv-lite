@@ -4,14 +4,9 @@
 .section .text.init
 entry:
 
-    la    sp, __sp-32   # set up the stack pointer, using a constant defined in the linker script.
+	la    sp, __sp-32   # set up the stack pointer, using a constant defined in the linker script.
 
-    la    t0, end       # on hardware, ECALL doesn't stop the CPU, so define
-                        # a handler to catch the ECALL and spin
-#    csrw  0x305, t0     # set the address of the handler (CSR 0x305 is the trap handler base register)
-
-    call  main          # call the main function
-#    ecall               # halt the simluation when it returns
+	call  main          # call the main function
 
 end:
-    j end               # loop when finished if there is no environment to return to.
+	j end               # loop when finished if there is no environment to return to.
