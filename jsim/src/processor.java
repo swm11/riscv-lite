@@ -115,9 +115,9 @@ class processor
 	for(a=lowerBound; a<=upperBound; a=a+4) {
 	    m = mem.load(a);
 	    decodedInst_t d = decode(m);
-	    System.out.format("0x%04x: 0x%08x opcode=%s typ=%5s inst=%5s rd=%4s rs1=%4s rs2=%4s imm=0x%08x=%d\n",
+	    System.out.format("0x%04x: 0x%08x opcode=%s typ=%-5s inst=%-5s rd=%-4s rs1=%-4s rs2=%-4s imm=0x%08x=%d\n",
 			      a, m,
-			      Integer.toBinaryString(d.opcode),
+			      String.format("%7s", Integer.toBinaryString(d.opcode)).replace(' ', '0'), // nasty hack to get exaclty 7 binary digits
 			      d.typ.name(), d.inst.name(),
 			      regABInameStr[d.rd],
 			      regABInameStr[d.rs1], regABInameStr[d.rs2],
@@ -168,11 +168,11 @@ class processor
 		rf[1] = oldpc+4; // x1 = ra (return address)
 		break;
 	    case LW:
-		addr = (rf[d.rs1] + d.imm)/4; // shift/div does byte-to-word addressing fix (TODO: clean up?)
+		addr = (rf[d.rs1] + d.imm);
 		rf[d.rd] = mem.load(addr);
 		break;
 	    case SW:
-		addr = (rf[d.rs1] + d.imm)/4;
+		addr = (rf[d.rs1] + d.imm);
 		mem.store(addr, rf[d.rs2]);
 		break;
 	    default:

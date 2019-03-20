@@ -9,9 +9,21 @@ class memory
 
     private boolean checkValidAddress(int byteaddress)
     {
-	return ((byteaddress & 0x3)==0)
-	    && ((byteaddress/4)<this.mem.length)
-	    && (byteaddress>=0);
+	boolean valid;                            // check:
+	valid = ((byteaddress & 0x3)==0)          //  alignment requirement
+	     && ((byteaddress/4)<this.mem.length) //  upper bound
+	     && (byteaddress>=0);                 //  lower bound
+	if(!valid) {
+	    if((byteaddress & 0x3)==0) {
+		System.out.format("ERROR: out of range address sent to memory: 0x%08x = %d\n",
+				  byteaddress, byteaddress);
+	    } else {
+		System.out.format("ERROR: incorrectly aligned address sent to memory: 0x%08x = 0b%s\n",
+				  byteaddress,
+				  String.format("%7s", Integer.toBinaryString(byteaddress)).replace(' ', '0')); // nasty hack to get exaclty 32 binary digits
+	    }
+	}
+	return valid;
     }
     
     public int load(int byteaddress)
@@ -50,6 +62,8 @@ class memory
 	for(int a=0; a<memsizewords; a++) {
 	    this.mem[a] = 0;
 	}
+	System.out.format("Memory size = %d words = %d bytes = %d KiB\n",
+			  this.mem.length, this.mem.length*4, this.mem.length*4/1024);
 	// load binary image into the memory
         byte [] b = Files.readAllBytes(Paths.get(filepath));
 	// copy bytes from byte buffer into our word-sized mem[] array

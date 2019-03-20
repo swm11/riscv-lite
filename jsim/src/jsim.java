@@ -7,7 +7,7 @@ class jsim
         memory mem=new memory();
 	processor proc=new processor();
 	try {
-	    mem.memory(64*1024, "../fib/build/mem.bin");
+	    mem.memory(65*1024, "../fib/build/mem.bin");
 	} catch (IOException e) {
 	    System.out.format("ERROR: Failed to read binary initialisation file.\n");
 	}
