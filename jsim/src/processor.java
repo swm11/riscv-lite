@@ -17,7 +17,7 @@ class processor
 
     private enum instClass {Rtype, Itype, Stype, Btype, Utype, Jtype, Udef};
     
-    private enum inst_t {UDEF, ADD, ADDI, AUIPC, BLT, J, JAL, JALR, LW, MV, SW};
+    private enum inst_t {UDEF, ADD, ADDI, AUIPC, BLT, J, JAL, JALR, LW, LUI, MV, SW};
 
     // Decoded instruction type
     private class decodedInst {
@@ -105,6 +105,11 @@ class processor
 	    d.imm = bitextract.bitExtractInt(inst,12,31)<<12;
 	    d.inst = inst_t.AUIPC;
 	    break;
+	case 0b0110111: // LUI
+	    d.typ = instClass.Utype;
+	    d.imm = bitextract.bitExtractInt(inst,12,31)<<12;
+	    d.inst = inst_t.LUI;
+	    break;
 	case 0b1101111: // JAL (J-type)
 	    d.typ = instClass.Jtype;
 	    d.imm =
@@ -153,7 +158,10 @@ class processor
 	    archst.rf[d.rd] = archst.rf[d.rs1] + d.imm;
 	    break;
 	case AUIPC:
-	    archst.rf[d.rd] = archst.pc + d.imm; // x2 = sp
+	    archst.rf[d.rd] = archst.pc + d.imm;
+	    break;
+	case LUI:
+	    archst.rf[d.rd] = d.imm;
 	    break;
 	case BLT:
 	    if(archst.rf[d.rs1] < archst.rf[d.rs2])

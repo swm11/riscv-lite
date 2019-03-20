@@ -49,7 +49,7 @@ class memory
     }
     
     public int load(int byteaddress)
-    { 
+    {
         if(this.checkValidAddress(byteaddress))
 	    return this.mem[byteaddress/4];
 	else
@@ -57,10 +57,13 @@ class memory
     }
 
     public void store(int byteaddress, int data)
-    { 
-        if(this.checkValidAddress(byteaddress))
+    {
+	if(byteaddress == 0xf0000000) {// magic output device detected
+	    System.out.format("**********************************************************************\n");
+	    System.out.format("* RESULT = 0x%08x = %d\n",data,data);
+	    System.out.format("**********************************************************************\n");
+	} else if(this.checkValidAddress(byteaddress))
 	    this.mem[byteaddress/4] = data;
-	// TODO raise exception on invalid address?
     }
 
     public void hexdump(int to, int from)
