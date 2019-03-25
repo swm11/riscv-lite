@@ -46,112 +46,13 @@ class Processor {
     return new Processor(Memory.initialize(memSizeBytes, progamFilePath), new ArchState(startPc));
   }
 
-  /** Decode an instruction. */
-  private DecodedInst decode(int inst) {
-    DecodedInst d = new DecodedInst();
-    // Decode the fixed fields even if they are not needed for a particular instruction
-    d.opcode = BitExtract.bitExtractByte(inst, 0, 6);
-    d.rd = BitExtract.bitExtractByte(inst, 7, 11);
-    d.rs1 = BitExtract.bitExtractByte(inst, 15, 19);
-    d.rs2 = BitExtract.bitExtractByte(inst, 20, 24);
-    d.funct3 = BitExtract.bitExtractByte(inst, 12, 14);
-    d.funct7 = BitExtract.bitExtractByte(inst, 25, 31);
-    switch (d.opcode) {
-      case 0b0110011: // R-type instructions (e.g. ADD)
-        d.typ = DecodedInst.InstClass.R_TYPE;
-        d.imm = 0;
-        switch ((d.funct7 << 3) | d.funct3) {
-          case ((0b000000 << 3) | 0b000):
-            d.inst = DecodedInst.InstT.ADD;
-            break;
-          default:
-            d.inst = DecodedInst.InstT.UDEF;
-        }
-        break;
-
-      case 0b0010011: // I-type instructions (e.g. ADDI)
-      case 0b0000011: // also load instructions
-      case 0b1100111: // also JALR
-        d.typ = DecodedInst.InstClass.I_TYPE;
-        d.imm = BitExtract.bitExtractSignedInt(inst, 20, 31);
-        switch ((d.opcode << 3) | d.funct3) {
-          case (0b0010011 << 3) | 0b000:
-            d.inst = DecodedInst.InstT.ADDI;
-            break;
-          case (0b0000011 << 3) | 0b010:
-            d.inst = DecodedInst.InstT.LW;
-            break;
-          case (0b1100111 << 3) | 0b000:
-            d.inst = DecodedInst.InstT.JALR;
-            break;
-          default:
-            d.inst = DecodedInst.InstT.UDEF;
-        }
-        break;
-      case 0b0100011: // S-type (store instructions)
-        d.typ = DecodedInst.InstClass.S_TYPE;
-        d.imm = (BitExtract.bitExtractSignedInt(inst, 25, 31) << 5) | d.rd;
-        switch (d.funct3) {
-          case 0b010:
-            d.inst = DecodedInst.InstT.SW;
-            break;
-          default:
-            d.inst = DecodedInst.InstT.UDEF;
-        }
-        break;
-      case 0b0010111: // AUIPC
-        d.typ = DecodedInst.InstClass.U_TYPE;
-        d.imm = BitExtract.bitExtractInt(inst, 12, 31) << 12;
-        d.inst = DecodedInst.InstT.AUIPC;
-        break;
-      case 0b0110111: // LUI
-        d.typ = DecodedInst.InstClass.U_TYPE;
-        d.imm = BitExtract.bitExtractInt(inst, 12, 31) << 12;
-        d.inst = DecodedInst.InstT.LUI;
-        break;
-      case 0b1101111: // JAL (J-type)
-        d.typ = DecodedInst.InstClass.J_TYPE;
-        d.imm =
-            (BitExtract.bitExtractInt(inst, 21, 30) << 1)
-                | (BitExtract.bitExtractInt(inst, 20, 20) << 11)
-                | (BitExtract.bitExtractInt(inst, 12, 19) << 12)
-                | (BitExtract.bitExtractSignedInt(inst, 31, 31) << 20);
-        d.inst = DecodedInst.InstT.JAL;
-        break;
-        //  B-type instrucitons
-      case 0b1100011: // conditional branches
-        d.typ = DecodedInst.InstClass.B_TYPE;
-        d.imm =
-            BitExtract.bitExtractInt(inst, 8, 11) << 1
-                | BitExtract.bitExtractInt(inst, 25, 30) << 5
-                | BitExtract.bitExtractInt(inst, 7, 7) << 11
-                | BitExtract.bitExtractSignedInt(inst, 31, 31) << 12;
-        switch (d.funct3) {
-          case 0b100:
-            d.inst = DecodedInst.InstT.BLT;
-            break;
-          default:
-            d.inst = DecodedInst.InstT.UDEF;
-        }
-        break;
-
-      default:
-        d.typ = DecodedInst.InstClass.UNDEFINED;
-        d.inst = DecodedInst.InstT.UDEF;
-        d.imm = 0;
-    }
-
-    return d;
-  }
-
   ExecuteState executeStep() {
-    DecodedInst d;
     // Move onto the next pc
     archst.pc = archst.nextpc;
     // Ensure register zero is always 0
     archst.rf[0] = 0;
     // Fetch and decode instruction
-    d = decode(this.mem.load(archst.pc));
+    DecodedInst d = DecodedInst.decode(this.mem.load(archst.pc));
     // By default the nextpc is the next instruction
     archst.nextpc = archst.pc + 4;
     switch (d.inst) {
@@ -197,7 +98,7 @@ class Processor {
     int a, m;
     for (a = lowerBound; a <= upperBound; a = a + 4) {
       m = this.mem.load(a);
-      DecodedInst d = decode(m);
+      DecodedInst d = DecodedInst.decode(m);
       System.out.format(
           "0x%04x: 0x%08x opcode=%s typ=%-5s inst=%-5s rd=%-4s rs1=%-4s rs2=%-4s imm=0x%08x=%d\n",
           a,
@@ -216,8 +117,7 @@ class Processor {
 
   /** Report on instruction executed. */
   void traceExecutedInstruction() {
-    DecodedInst d;
-    d = decode(this.mem.load(archst.pc)); // fetch and decode instruction
+    DecodedInst d = DecodedInst.decode(this.mem.load(archst.pc)); // fetch and decode instruction
     System.out.format(
         "pc=0x%08x inst=%5s rd=x%02d=%4s=%-8d rs1=%4s=%-8d rs2=%4s=%-8d imm=0x%08x=%d\n",
         archst.pc,
