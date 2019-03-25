@@ -1,8 +1,8 @@
 package uk.ac.cam.swm11.riscvlite;
 
-/******************************************************************************
- * Helper functions to extract bits from an integer
- ******************************************************************************/
+/**
+ * Helper functions to extract bits from an integer.
+ */
 class bitextract
 {
     public static int bitExtractInt(

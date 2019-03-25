@@ -39,9 +39,9 @@ class processor
     private memory mem;
     private archState archst;
 
-    /**********************************************************************
-     * Initialise memory and architectural state
-     **********************************************************************/
+    /**
+     * Initialise memory and architectural state.
+     */
     public void processor(
 			  int memsizebytes,
 			  String programfilepath,
@@ -59,9 +59,9 @@ class processor
 	}
     }
     
-    /**********************************************************************
-     * Decode an instruction
-     **********************************************************************/
+    /**
+     * Decode an instruction.
+     */
     private decodedInst decode(int inst)
     {
 	decodedInst d = new decodedInst();
@@ -196,9 +196,9 @@ class processor
     }
 
     
-    /**********************************************************************
-     * Dump memory with instructions decoded
-     **********************************************************************/
+    /**
+     * Dump memory with instructions decoded.
+     */
     public void decodedump(
 			   memory mem,
 			   int lowerBound,
@@ -219,9 +219,9 @@ class processor
 	}
     }
 
-    /**********************************************************************
-     * Report on instruction executed
-     **********************************************************************/
+    /**
+     * Report on instruction executed.
+     */
     public void traceExecutedInstruction()
     {
 	decodedInst d;
