@@ -45,7 +45,7 @@ class Processor {
   }
 
   // Decoded instruction type
-  private class DecodedInst {
+  private static class DecodedInst {
     InstClass typ; // decoded instruction type
     InstT inst; // decoded instruction
     int imm; // decoded immediate operand
@@ -54,7 +54,7 @@ class Processor {
   }
 
   // Architectural state of the processor
-  private class ArchState {
+  private static class ArchState {
     int pc, nextpc; // current and next program counter values
     int[] rf; // register file
   }
