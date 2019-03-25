@@ -8,7 +8,7 @@ class Processor {
     RUNNING
   };
 
-  private final String regABInameStr[] = {
+  private final String[] regABInameStr = {
     "zero", "ra", "sp", "gp",
     "tp", "t0", "t1", "t2",
     "fp", "s1", "a0", "a1",
@@ -56,7 +56,7 @@ class Processor {
   // Architectural state of the processor
   private class ArchState {
     int pc, nextpc; // current and next program counter values
-    int rf[]; // register file
+    int[] rf; // register file
   }
 
   // Storage for the memory and architectural state

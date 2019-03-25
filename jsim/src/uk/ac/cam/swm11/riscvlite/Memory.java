@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 class Memory {
-  private int mem[];
+  private int[] mem;
 
   // initialise a memory of a given size with a binary image from a file
   public void memory(int memsizebytes, String filepath) throws IOException {
