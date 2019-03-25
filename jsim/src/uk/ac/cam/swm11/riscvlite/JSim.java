@@ -3,7 +3,7 @@ package uk.ac.cam.swm11.riscvlite;
 import java.io.IOException;
 
 class JSim {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     Memory mem = new Memory();
     Processor.ExecuteState ps;
     Processor proc = new Processor();
