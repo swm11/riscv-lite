@@ -19,40 +19,6 @@ class Processor {
     "t3", "t4", "t5", "t6"
   };
 
-  private enum InstClass {
-    R_TYPE,
-    I_TYPE,
-    S_TYPE,
-    B_TYPE,
-    U_TYPE,
-    J_TYPE,
-    UNDEFINED
-  }
-
-  private enum InstT {
-    UDEF,
-    ADD,
-    ADDI,
-    AUIPC,
-    BLT,
-    J,
-    JAL,
-    JALR,
-    LW,
-    LUI,
-    MV,
-    SW
-  }
-
-  // Decoded instruction type
-  private static class DecodedInst {
-    InstClass typ; // decoded instruction type
-    InstT inst; // decoded instruction
-    int imm; // decoded immediate operand
-    byte rd, rs1, rs2; // registers
-    byte opcode, funct3, funct7;
-  }
-
   // Architectural state of the processor
   private static class ArchState {
     int pc, nextpc; // current and next program counter values
@@ -92,69 +58,69 @@ class Processor {
     d.funct7 = BitExtract.bitExtractByte(inst, 25, 31);
     switch (d.opcode) {
       case 0b0110011: // R-type instructions (e.g. ADD)
-        d.typ = InstClass.R_TYPE;
+        d.typ = DecodedInst.InstClass.R_TYPE;
         d.imm = 0;
         switch ((d.funct7 << 3) | d.funct3) {
           case ((0b000000 << 3) | 0b000):
-            d.inst = InstT.ADD;
+            d.inst = DecodedInst.InstT.ADD;
             break;
           default:
-            d.inst = InstT.UDEF;
+            d.inst = DecodedInst.InstT.UDEF;
         }
         break;
 
       case 0b0010011: // I-type instructions (e.g. ADDI)
       case 0b0000011: // also load instructions
       case 0b1100111: // also JALR
-        d.typ = InstClass.I_TYPE;
+        d.typ = DecodedInst.InstClass.I_TYPE;
         d.imm = BitExtract.bitExtractSignedInt(inst, 20, 31);
         switch ((d.opcode << 3) | d.funct3) {
           case (0b0010011 << 3) | 0b000:
-            d.inst = InstT.ADDI;
+            d.inst = DecodedInst.InstT.ADDI;
             break;
           case (0b0000011 << 3) | 0b010:
-            d.inst = InstT.LW;
+            d.inst = DecodedInst.InstT.LW;
             break;
           case (0b1100111 << 3) | 0b000:
-            d.inst = InstT.JALR;
+            d.inst = DecodedInst.InstT.JALR;
             break;
           default:
-            d.inst = InstT.UDEF;
+            d.inst = DecodedInst.InstT.UDEF;
         }
         break;
       case 0b0100011: // S-type (store instructions)
-        d.typ = InstClass.S_TYPE;
+        d.typ = DecodedInst.InstClass.S_TYPE;
         d.imm = (BitExtract.bitExtractSignedInt(inst, 25, 31) << 5) | d.rd;
         switch (d.funct3) {
           case 0b010:
-            d.inst = InstT.SW;
+            d.inst = DecodedInst.InstT.SW;
             break;
           default:
-            d.inst = InstT.UDEF;
+            d.inst = DecodedInst.InstT.UDEF;
         }
         break;
       case 0b0010111: // AUIPC
-        d.typ = InstClass.U_TYPE;
+        d.typ = DecodedInst.InstClass.U_TYPE;
         d.imm = BitExtract.bitExtractInt(inst, 12, 31) << 12;
-        d.inst = InstT.AUIPC;
+        d.inst = DecodedInst.InstT.AUIPC;
         break;
       case 0b0110111: // LUI
-        d.typ = InstClass.U_TYPE;
+        d.typ = DecodedInst.InstClass.U_TYPE;
         d.imm = BitExtract.bitExtractInt(inst, 12, 31) << 12;
-        d.inst = InstT.LUI;
+        d.inst = DecodedInst.InstT.LUI;
         break;
       case 0b1101111: // JAL (J-type)
-        d.typ = InstClass.J_TYPE;
+        d.typ = DecodedInst.InstClass.J_TYPE;
         d.imm =
             (BitExtract.bitExtractInt(inst, 21, 30) << 1)
                 | (BitExtract.bitExtractInt(inst, 20, 20) << 11)
                 | (BitExtract.bitExtractInt(inst, 12, 19) << 12)
                 | (BitExtract.bitExtractSignedInt(inst, 31, 31) << 20);
-        d.inst = InstT.JAL;
+        d.inst = DecodedInst.InstT.JAL;
         break;
         //  B-type instrucitons
       case 0b1100011: // conditional branches
-        d.typ = InstClass.B_TYPE;
+        d.typ = DecodedInst.InstClass.B_TYPE;
         d.imm =
             BitExtract.bitExtractInt(inst, 8, 11) << 1
                 | BitExtract.bitExtractInt(inst, 25, 30) << 5
@@ -162,16 +128,16 @@ class Processor {
                 | BitExtract.bitExtractSignedInt(inst, 31, 31) << 12;
         switch (d.funct3) {
           case 0b100:
-            d.inst = InstT.BLT;
+            d.inst = DecodedInst.InstT.BLT;
             break;
           default:
-            d.inst = InstT.UDEF;
+            d.inst = DecodedInst.InstT.UDEF;
         }
         break;
 
       default:
-        d.typ = InstClass.UNDEFINED;
-        d.inst = InstT.UDEF;
+        d.typ = DecodedInst.InstClass.UNDEFINED;
+        d.inst = DecodedInst.InstT.UDEF;
         d.imm = 0;
     }
 
