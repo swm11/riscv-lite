@@ -35,7 +35,7 @@ class Processor {
   }
 
   /** Dump memory with instructions decoded. */
-  void decodedump(int lowerBound, int upperBound) {
+  void decodeDump(int lowerBound, int upperBound) {
     int a, m;
     for (a = lowerBound; a <= upperBound; a = a + 4) {
       m = this.mem.load(a);

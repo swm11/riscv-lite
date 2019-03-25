@@ -14,7 +14,7 @@ class JSim {
       return;
     }
     System.out.format("Decoded dump of the initial memory:\n");
-    proc.decodedump(0, 50 * 4);
+    proc.decodeDump(0, 50 * 4);
     // step through execution until the stop condition is met
     do {
       ps = proc.executeStep();
