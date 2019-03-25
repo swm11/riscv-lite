@@ -20,13 +20,13 @@ class Processor {
   };
 
   private enum InstClass {
-    Rtype,
-    Itype,
-    Stype,
-    Btype,
-    Utype,
-    Jtype,
-    Udef
+    R_TYPE,
+    I_TYPE,
+    S_TYPE,
+    B_TYPE,
+    U_TYPE,
+    J_TYPE,
+    UNDEFINED
   };
 
   private enum InstT {
@@ -88,7 +88,7 @@ class Processor {
     d.funct7 = BitExtract.bitExtractByte(inst, 25, 31);
     switch (d.opcode) {
       case 0b0110011: // R-type instructions (e.g. ADD)
-        d.typ = InstClass.Rtype;
+        d.typ = InstClass.R_TYPE;
         d.imm = 0;
         switch ((d.funct7 << 3) | d.funct3) {
           case ((0b000000 << 3) | 0b000):
@@ -102,7 +102,7 @@ class Processor {
       case 0b0010011: // I-type instructions (e.g. ADDI)
       case 0b0000011: // also load instructions
       case 0b1100111: // also JALR
-        d.typ = InstClass.Itype;
+        d.typ = InstClass.I_TYPE;
         d.imm = BitExtract.bitExtractSignedInt(inst, 20, 31);
         switch ((d.opcode << 3) | d.funct3) {
           case (0b0010011 << 3) | 0b000:
@@ -119,7 +119,7 @@ class Processor {
         }
         break;
       case 0b0100011: // S-type (store instructions)
-        d.typ = InstClass.Stype;
+        d.typ = InstClass.S_TYPE;
         d.imm = (BitExtract.bitExtractSignedInt(inst, 25, 31) << 5) | d.rd;
         switch (d.funct3) {
           case 0b010:
@@ -130,17 +130,17 @@ class Processor {
         }
         break;
       case 0b0010111: // AUIPC
-        d.typ = InstClass.Utype;
+        d.typ = InstClass.U_TYPE;
         d.imm = BitExtract.bitExtractInt(inst, 12, 31) << 12;
         d.inst = InstT.AUIPC;
         break;
       case 0b0110111: // LUI
-        d.typ = InstClass.Utype;
+        d.typ = InstClass.U_TYPE;
         d.imm = BitExtract.bitExtractInt(inst, 12, 31) << 12;
         d.inst = InstT.LUI;
         break;
       case 0b1101111: // JAL (J-type)
-        d.typ = InstClass.Jtype;
+        d.typ = InstClass.J_TYPE;
         d.imm =
             (BitExtract.bitExtractInt(inst, 21, 30) << 1)
                 | (BitExtract.bitExtractInt(inst, 20, 20) << 11)
@@ -150,7 +150,7 @@ class Processor {
         break;
         //  B-type instrucitons
       case 0b1100011: // conditional branches
-        d.typ = InstClass.Btype;
+        d.typ = InstClass.B_TYPE;
         d.imm =
             BitExtract.bitExtractInt(inst, 8, 11) << 1
                 | BitExtract.bitExtractInt(inst, 25, 30) << 5
@@ -166,7 +166,7 @@ class Processor {
         break;
 
       default:
-        d.typ = InstClass.Udef;
+        d.typ = InstClass.UNDEFINED;
         d.inst = InstT.UDEF;
         d.imm = 0;
     }
