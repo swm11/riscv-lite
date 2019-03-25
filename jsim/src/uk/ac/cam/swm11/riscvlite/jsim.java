@@ -1,3 +1,5 @@
+package uk.ac.cam.swm11.riscvlite;
+
 import java.io.IOException;
 
 class jsim

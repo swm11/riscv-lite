@@ -1,4 +1,5 @@
-import java.lang.Math;
+package uk.ac.cam.swm11.riscvlite;
+
 import java.io.IOException;
 
 class processor
