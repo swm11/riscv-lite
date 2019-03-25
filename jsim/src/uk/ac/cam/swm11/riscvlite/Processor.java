@@ -65,8 +65,7 @@ class Processor {
 
   /** Initialise memory and architectural state. */
   void processor(int memsizebytes, String programfilepath, int startPC) throws IOException {
-    this.mem = new Memory();
-    this.mem.memory(memsizebytes, programfilepath);
+    this.mem = Memory.initialize(memsizebytes, programfilepath);
     archst = new ArchState();
     archst.nextpc = startPC;
     archst.pc = -1; // value should never be looked at, so set to an invalid value
@@ -223,7 +222,7 @@ class Processor {
   }
 
   /** Dump memory with instructions decoded. */
-  void decodedump(Memory mem, int lowerBound, int upperBound) {
+  void decodedump(int lowerBound, int upperBound) {
     int a, m;
     for (a = lowerBound; a <= upperBound; a = a + 4) {
       m = this.mem.load(a);

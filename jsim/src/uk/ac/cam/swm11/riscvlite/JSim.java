@@ -4,7 +4,6 @@ import java.io.IOException;
 
 class JSim {
   public static void main(String[] args) {
-    Memory mem = new Memory();
     Processor.ExecuteState ps;
     Processor proc = new Processor();
     try {
@@ -14,7 +13,7 @@ class JSim {
       System.out.format("ERROR: Failed to read binary initialisation file.\n");
     }
     System.out.format("Decoded dump of the initial memory:\n");
-    proc.decodedump(mem, 0, 50 * 4);
+    proc.decodedump(0, 50 * 4);
     // step through execution until the stop condition is met
     do {
       ps = proc.executeStep();

@@ -7,27 +7,33 @@ import java.nio.file.Paths;
 class Memory {
   private int[] mem;
 
+  private Memory(int[] mem) {
+    this.mem = mem;
+  }
+
   // initialise a memory of a given size with a binary image from a file
-  void memory(int memsizebytes, String filepath) throws IOException {
+  static Memory initialize(int memsizebytes, String filepath) throws IOException {
     // initialise the memory
     int memsizewords = memsizebytes / 4;
-    this.mem = new int[memsizewords];
+    int[] mem = new int[memsizewords];
     for (int a = 0; a < memsizewords; a++) {
-      this.mem[a] = 0;
+      mem[a] = 0;
     }
     System.out.format(
         "Memory size = %d words = %d bytes = %d KiB\n",
-        this.mem.length, this.mem.length * 4, this.mem.length * 4 / 1024);
+        mem.length, mem.length * 4, mem.length * 4 / 1024);
     // load binary image into the memory
     byte[] b = Files.readAllBytes(Paths.get(filepath));
     // copy bytes from byte buffer into our word-sized mem[] array
-    for (int a = 0; (a < this.mem.length) && ((a * 4 + 3) < b.length); a++) {
-      this.mem[a] =
+    for (int a = 0; (a < mem.length) && ((a * 4 + 3) < b.length); a++) {
+      mem[a] =
           ((b[a * 4 + 3] & 0xff) << 24)
               | ((b[a * 4 + 2] & 0xff) << 16)
               | ((b[a * 4 + 1] & 0xff) << 8)
               | ((b[a * 4 + 0] & 0xff));
     }
+
+    return new Memory(mem);
   }
 
   private boolean checkValidAddress(int byteaddress) {
