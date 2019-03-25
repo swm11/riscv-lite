@@ -3,10 +3,6 @@ package uk.ac.cam.swm11.riscvlite;
 import java.io.IOException;
 
 class Processor {
-  public enum ExecuteState {
-    STOPPED,
-    RUNNING
-  }
 
   private static final String[] REG_AB_INAME_STR = {
     "zero", "ra", "sp", "gp",
@@ -34,51 +30,8 @@ class Processor {
     return new Processor(Memory.initialize(memSizeBytes, progamFilePath), new ArchState(startPc));
   }
 
-  ExecuteState executeStep() {
-    // Move onto the next pc
-    archst.pc = archst.nextpc;
-    // Ensure register zero is always 0
-    archst.rf[0] = 0;
-    // Fetch and decode instruction
-    DecodedInst d = DecodedInst.decode(this.mem.load(archst.pc));
-    // By default the nextpc is the next instruction
-    archst.nextpc = archst.pc + 4;
-    switch (d.inst) {
-      case ADD: // add two registers
-        archst.rf[d.rd] = archst.rf[d.rs1] + archst.rf[d.rs2];
-        break;
-      case ADDI: // add a register and an immediate (i.e. a constant)
-        archst.rf[d.rd] = archst.rf[d.rs1] + d.imm;
-        break;
-      case AUIPC: // program counter relative immediate
-        archst.rf[d.rd] = archst.pc + d.imm;
-        break;
-      case LUI: // load upper immediate
-        archst.rf[d.rd] = d.imm;
-        break;
-      case BLT: // branch less than
-        if (archst.rf[d.rs1] < archst.rf[d.rs2]) archst.nextpc = archst.pc + d.imm;
-        break;
-      case JAL: // jump and link (pc + immediate)
-        archst.nextpc = archst.pc + d.imm;
-        archst.rf[1] = archst.pc + 4; // x1 = ra (return address)
-        break;
-      case JALR: // jump and link (register + immediate)
-        archst.nextpc = archst.rf[d.rs1] + d.imm;
-        archst.rf[1] = archst.pc + 4; // x1 = ra (return address)
-        break;
-      case LW: // load word
-        archst.rf[d.rd] = this.mem.load(archst.rf[d.rs1] + d.imm);
-        break;
-      case SW: // store word
-        this.mem.store(archst.rf[d.rs1] + d.imm, archst.rf[d.rs2]);
-        break;
-      default:
-        System.out.format("ERROR: Undefined instruction at pc=0x%08x\n", archst.pc);
-        archst.nextpc = archst.pc; // trigger stop condition
-    }
-
-    return archst.nextpc == archst.pc ? ExecuteState.STOPPED : ExecuteState.RUNNING;
+  ArchState.ExecuteState executeStep() {
+    return archst.executeStep(mem);
   }
 
   /** Dump memory with instructions decoded. */

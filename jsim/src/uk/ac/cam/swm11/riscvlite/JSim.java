@@ -4,7 +4,7 @@ import java.io.IOException;
 
 class JSim {
   public static void main(String[] args) {
-    Processor.ExecuteState ps;
+    ArchState.ExecuteState ps;
     Processor proc;
     try {
       // initialise processor and load program binary
@@ -19,6 +19,6 @@ class JSim {
     do {
       ps = proc.executeStep();
       proc.traceExecutedInstruction();
-    } while (ps == Processor.ExecuteState.RUNNING);
+    } while (ps == ArchState.ExecuteState.RUNNING);
   }
 }
