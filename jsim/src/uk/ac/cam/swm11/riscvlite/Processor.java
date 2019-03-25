@@ -46,11 +46,11 @@ class Processor {
 
   // Decoded instruction type
   private class DecodedInst {
-    public InstClass typ; // decoded instruction type
-    public InstT inst; // decoded instruction
-    public int imm; // decoded immediate operand
-    public byte rd, rs1, rs2; // registers
-    public byte opcode, funct3, funct7;
+    InstClass typ; // decoded instruction type
+    InstT inst; // decoded instruction
+    int imm; // decoded immediate operand
+    byte rd, rs1, rs2; // registers
+    byte opcode, funct3, funct7;
   }
 
   // Architectural state of the processor
@@ -64,7 +64,7 @@ class Processor {
   private ArchState archst;
 
   /** Initialise memory and architectural state. */
-  public void processor(int memsizebytes, String programfilepath, int startPC) throws IOException {
+  void processor(int memsizebytes, String programfilepath, int startPC) throws IOException {
     this.mem = new Memory();
     this.mem.memory(memsizebytes, programfilepath);
     archst = new ArchState();
@@ -174,7 +174,7 @@ class Processor {
     return d;
   }
 
-  public ExecuteState executeStep() {
+  ExecuteState executeStep() {
     DecodedInst d;
     // Move onto the next pc
     archst.pc = archst.nextpc;
@@ -223,7 +223,7 @@ class Processor {
   }
 
   /** Dump memory with instructions decoded. */
-  public void decodedump(Memory mem, int lowerBound, int upperBound) {
+  void decodedump(Memory mem, int lowerBound, int upperBound) {
     int a, m;
     for (a = lowerBound; a <= upperBound; a = a + 4) {
       m = this.mem.load(a);
@@ -245,7 +245,7 @@ class Processor {
   }
 
   /** Report on instruction executed. */
-  public void traceExecutedInstruction() {
+  void traceExecutedInstruction() {
     DecodedInst d;
     d = decode(this.mem.load(archst.pc)); // fetch and decode instruction
     System.out.format(

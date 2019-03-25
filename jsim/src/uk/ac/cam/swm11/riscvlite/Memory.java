@@ -8,7 +8,7 @@ class Memory {
   private int[] mem;
 
   // initialise a memory of a given size with a binary image from a file
-  public void memory(int memsizebytes, String filepath) throws IOException {
+  void memory(int memsizebytes, String filepath) throws IOException {
     // initialise the memory
     int memsizewords = memsizebytes / 4;
     this.mem = new int[memsizewords];
@@ -51,12 +51,12 @@ class Memory {
     return valid;
   }
 
-  public int load(int byteaddress) {
+  int load(int byteaddress) {
     if (this.checkValidAddress(byteaddress)) return this.mem[byteaddress / 4];
     else return 0xdead0000;
   }
 
-  public void store(int byteaddress, int data) {
+  void store(int byteaddress, int data) {
     if (byteaddress == 0xf0000000) { // magic output device detected
       System.out.format("**********************************************************************\n");
       System.out.format("* RESULT = 0x%08x = %d\n", data, data);
@@ -64,7 +64,7 @@ class Memory {
     } else if (this.checkValidAddress(byteaddress)) this.mem[byteaddress / 4] = data;
   }
 
-  public void hexdump(int to, int from) {
+  void hexdump(int to, int from) {
     from = from / 4;
     to = to / 4;
     if (from < 0) from = 0;
