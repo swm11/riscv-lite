@@ -2,6 +2,18 @@ package uk.ac.cam.swm11.riscvlite;
 
 // Decoded instruction type
 class DecodedInst {
+
+  static final String[] REG_AB_INAME_STR = {
+    "zero", "ra", "sp", "gp",
+    "tp", "t0", "t1", "t2",
+    "fp", "s1", "a0", "a1",
+    "a2", "a3", "a4", "a5",
+    "a6", "a7", "s2", "s3",
+    "s4", "s5", "s6", "s7",
+    "s8", "s9", "s10", "s11",
+    "t3", "t4", "t5", "t6"
+  };
+
   enum InstClass {
     R_TYPE,
     I_TYPE,
@@ -61,6 +73,21 @@ class DecodedInst {
     this.opcode = fixedFields.opcode;
     this.funct3 = fixedFields.funct3;
     this.funct7 = fixedFields.funct7;
+  }
+
+  @Override
+  public String toString() {
+    return String.format(
+        "opcode=%s typ=%-5s inst=%-5s rd=%-4s rs1=%-4s rs2=%-4s imm=0x%08x=%d",
+        String.format("%7s", Integer.toBinaryString(opcode))
+            .replace(' ', '0'), // nasty hack to get exaclty 7 binary digits
+        typ.name(),
+        inst.name(),
+        REG_AB_INAME_STR[rd],
+        REG_AB_INAME_STR[rs1],
+        REG_AB_INAME_STR[rs2],
+        imm,
+        imm);
   }
 
   /** Decode an instruction. */

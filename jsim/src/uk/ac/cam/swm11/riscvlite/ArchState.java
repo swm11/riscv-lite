@@ -1,5 +1,7 @@
 package uk.ac.cam.swm11.riscvlite;
 
+import static uk.ac.cam.swm11.riscvlite.DecodedInst.REG_AB_INAME_STR;
+
 // Architectural state of the processor
 class ArchState {
 
@@ -8,8 +10,8 @@ class ArchState {
     RUNNING
   }
 
-  int pc, nextpc; // current and next program counter values
-  int[] rf; // register file
+  private int pc, nextpc; // current and next program counter values
+  private int[] rf; // register file
 
   ArchState(int startPc) {
     this.nextpc = startPc;
@@ -61,5 +63,34 @@ class ArchState {
         this.nextpc = this.pc; // trigger stop condition
     }
     return this.nextpc == this.pc ? ExecuteState.STOPPED : ExecuteState.RUNNING;
+  }
+
+  /** Report on instruction executed. */
+  void traceExecutedInstruction(Memory mem) {
+    DecodedInst d = DecodedInst.decode(mem.load(this.pc)); // fetch and decode instruction
+    System.out.format(
+        "pc=0x%08x inst=%5s rd=x%02d=%4s=%-8d rs1=%4s=%-8d rs2=%4s=%-8d imm=0x%08x=%d%n",
+        this.pc,
+        d.inst.name(),
+        d.rd,
+        REG_AB_INAME_STR[d.rd],
+        this.rf[d.rd],
+        REG_AB_INAME_STR[d.rs1],
+        this.rf[d.rs1],
+        REG_AB_INAME_STR[d.rs2],
+        this.rf[d.rs2],
+        d.imm,
+        d.imm);
+    if (this.nextpc != this.pc + 4) {
+      System.out.format(
+          "--------------------jump: 0x%08x->0x%08x --------------------%n", this.pc, this.nextpc);
+    }
+    if (this.nextpc == this.pc) {
+      System.out.format("--------------------STOPPED--------------------%nRegister map:%n");
+      for (int r = 0; r < 32; r++) {
+        System.out.format(
+            "  x%02d = %4s = 0x%08x = %d%n", r, REG_AB_INAME_STR[r], this.rf[r], this.rf[r]);
+      }
+    }
   }
 }
