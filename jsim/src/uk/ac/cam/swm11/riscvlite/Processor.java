@@ -19,18 +19,6 @@ class Processor {
     "t3", "t4", "t5", "t6"
   };
 
-  // Architectural state of the processor
-  private static class ArchState {
-    int pc, nextpc; // current and next program counter values
-    int[] rf; // register file
-
-    ArchState(int startPc) {
-      this.nextpc = startPc;
-      this.pc = -1;
-      this.rf = new int[32]; // will contain zeros
-    }
-  }
-
   // Storage for the memory and architectural state
   private Memory mem;
   private ArchState archst;
