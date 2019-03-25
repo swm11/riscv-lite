@@ -57,22 +57,27 @@ class Processor {
   private static class ArchState {
     int pc, nextpc; // current and next program counter values
     int[] rf; // register file
+
+    ArchState(int startPc) {
+      this.nextpc = startPc;
+      this.pc = -1;
+      this.rf = new int[32]; // will contain zeros
+    }
   }
 
   // Storage for the memory and architectural state
   private Memory mem;
   private ArchState archst;
 
+  private Processor(Memory memory, ArchState archState) {
+    this.mem = memory;
+    this.archst = archState;
+  }
+
   /** Initialise memory and architectural state. */
-  void processor(int memsizebytes, String programfilepath, int startPC) throws IOException {
-    this.mem = Memory.initialize(memsizebytes, programfilepath);
-    archst = new ArchState();
-    archst.nextpc = startPC;
-    archst.pc = -1; // value should never be looked at, so set to an invalid value
-    archst.rf = new int[32];
-    for (int r = 0; r < 32; r++) {
-      archst.rf[r] = 0;
-    }
+  static Processor initialize(int memsizebytes, String programfilepath, int startPC)
+      throws IOException {
+    return new Processor(Memory.initialize(memsizebytes, programfilepath), new ArchState(startPC));
   }
 
   /** Decode an instruction. */

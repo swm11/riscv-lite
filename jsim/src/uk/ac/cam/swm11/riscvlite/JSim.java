@@ -5,12 +5,13 @@ import java.io.IOException;
 class JSim {
   public static void main(String[] args) {
     Processor.ExecuteState ps;
-    Processor proc = new Processor();
+    Processor proc;
     try {
       // initialise processor and load program binary
-      proc.processor(65 * 1024, "../fib/build/mem.bin", 0);
+      proc = Processor.initialize(65 * 1024, "../fib/build/mem.bin", 0);
     } catch (IOException e) {
       System.out.format("ERROR: Failed to read binary initialisation file.\n");
+      return;
     }
     System.out.format("Decoded dump of the initial memory:\n");
     proc.decodedump(0, 50 * 4);
