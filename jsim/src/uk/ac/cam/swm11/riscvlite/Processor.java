@@ -75,9 +75,9 @@ class Processor {
   }
 
   /** Initialise memory and architectural state. */
-  static Processor initialize(int memsizebytes, String programfilepath, int startPC)
+  static Processor initialize(int memSizeBytes, String progamFilePath, int startPc)
       throws IOException {
-    return new Processor(Memory.initialize(memsizebytes, programfilepath), new ArchState(startPC));
+    return new Processor(Memory.initialize(memSizeBytes, progamFilePath), new ArchState(startPc));
   }
 
   /** Decode an instruction. */
