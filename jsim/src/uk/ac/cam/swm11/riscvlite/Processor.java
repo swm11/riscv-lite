@@ -6,7 +6,7 @@ class Processor {
   public enum ExecuteState {
     STOPPED,
     RUNNING
-  };
+  }
 
   private static final String[] REG_AB_INAME_STR = {
     "zero", "ra", "sp", "gp",
@@ -27,7 +27,7 @@ class Processor {
     U_TYPE,
     J_TYPE,
     UNDEFINED
-  };
+  }
 
   private enum InstT {
     UDEF,
@@ -42,7 +42,7 @@ class Processor {
     LUI,
     MV,
     SW
-  };
+  }
 
   // Decoded instruction type
   private class DecodedInst {
