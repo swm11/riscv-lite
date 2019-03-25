@@ -40,7 +40,7 @@ class Processor {
       int m = this.mem.load(a);
       DecodedInst d = DecodedInst.decode(m);
       System.out.format(
-          "0x%04x: 0x%08x opcode=%s typ=%-5s inst=%-5s rd=%-4s rs1=%-4s rs2=%-4s imm=0x%08x=%d\n",
+          "0x%04x: 0x%08x opcode=%s typ=%-5s inst=%-5s rd=%-4s rs1=%-4s rs2=%-4s imm=0x%08x=%d%n",
           a,
           m,
           String.format("%7s", Integer.toBinaryString(d.opcode))
@@ -59,7 +59,7 @@ class Processor {
   void traceExecutedInstruction() {
     DecodedInst d = DecodedInst.decode(this.mem.load(archst.pc)); // fetch and decode instruction
     System.out.format(
-        "pc=0x%08x inst=%5s rd=x%02d=%4s=%-8d rs1=%4s=%-8d rs2=%4s=%-8d imm=0x%08x=%d\n",
+        "pc=0x%08x inst=%5s rd=x%02d=%4s=%-8d rs1=%4s=%-8d rs2=%4s=%-8d imm=0x%08x=%d%n",
         archst.pc,
         d.inst.name(),
         d.rd,
@@ -73,14 +73,14 @@ class Processor {
         d.imm);
     if (archst.nextpc != archst.pc + 4) {
       System.out.format(
-          "--------------------jump: 0x%08x->0x%08x --------------------\n",
+          "--------------------jump: 0x%08x->0x%08x --------------------%n",
           archst.pc, archst.nextpc);
     }
     if (archst.nextpc == archst.pc) {
-      System.out.format("--------------------STOPPED--------------------\nRegister map:\n");
+      System.out.format("--------------------STOPPED--------------------%nRegister map:%n");
       for (int r = 0; r < 32; r++) {
         System.out.format(
-            "  x%02d = %4s = 0x%08x = %d\n", r, REG_AB_INAME_STR[r], archst.rf[r], archst.rf[r]);
+            "  x%02d = %4s = 0x%08x = %d%n", r, REG_AB_INAME_STR[r], archst.rf[r], archst.rf[r]);
       }
     }
   }

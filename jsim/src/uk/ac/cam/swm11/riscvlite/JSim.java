@@ -10,10 +10,10 @@ class JSim {
       // initialise processor and load program binary
       proc = Processor.initialize(65 * 1024, "../fib/build/mem.bin", 0);
     } catch (IOException e) {
-      System.out.format("ERROR: Failed to read binary initialisation file.\n");
+      System.out.format("ERROR: Failed to read binary initialisation file.%n");
       return;
     }
-    System.out.format("Decoded dump of the initial memory:\n");
+    System.out.format("Decoded dump of the initial memory:%n");
     proc.decodeDump(0, 50 * 4);
     // step through execution until the stop condition is met
     do {

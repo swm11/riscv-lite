@@ -17,7 +17,7 @@ class Memory {
     int memsizewords = memsizebytes / 4;
     int[] mem = new int[memsizewords]; // zero initialised
     System.out.format(
-        "Memory size = %d words = %d bytes = %d KiB\n",
+        "Memory size = %d words = %d bytes = %d KiB%n",
         mem.length, mem.length * 4, mem.length * 4 / 1024);
     // load binary image into the memory
     byte[] b = Files.readAllBytes(Paths.get(filepath));
@@ -42,10 +42,10 @@ class Memory {
     if (!valid) {
       if ((byteaddress & 0x3) == 0) {
         System.out.format(
-            "ERROR: out of range address sent to memory: 0x%08x = %d\n", byteaddress, byteaddress);
+            "ERROR: out of range address sent to memory: 0x%08x = %d%n", byteaddress, byteaddress);
       } else {
         System.out.format(
-            "ERROR: incorrectly aligned address sent to memory: 0x%08x = 0b%s\n",
+            "ERROR: incorrectly aligned address sent to memory: 0x%08x = 0b%s%n",
             byteaddress,
             String.format("%7s", Integer.toBinaryString(byteaddress))
                 .replace(' ', '0')); // nasty hack to get exaclty 32 binary digits
@@ -61,9 +61,9 @@ class Memory {
 
   void store(int byteaddress, int data) {
     if (byteaddress == 0xf0000000) { // magic output device detected
-      System.out.format("**********************************************************************\n");
-      System.out.format("* RESULT = 0x%08x = %d\n", data, data);
-      System.out.format("**********************************************************************\n");
+      System.out.format("**********************************************************************%n");
+      System.out.format("* RESULT = 0x%08x = %d%n", data, data);
+      System.out.format("**********************************************************************%n");
     } else if (this.checkValidAddress(byteaddress)) this.mem[byteaddress / 4] = data;
   }
 
@@ -73,6 +73,6 @@ class Memory {
     if (from < 0) from = 0;
     if (to >= mem.length) to = mem.length - 1;
     for (int a = to; a <= from; a++)
-      System.out.format("mem[0x%08x] = 0x%08x = %d\n", a * 4, this.mem[a], this.mem[a]);
+      System.out.format("mem[0x%08x] = 0x%08x = %d%n", a * 4, this.mem[a], this.mem[a]);
   }
 }

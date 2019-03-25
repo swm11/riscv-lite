@@ -57,7 +57,7 @@ class ArchState {
         mem.store(this.rf[d.rs1] + d.imm, this.rf[d.rs2]);
         break;
       default:
-        System.out.format("ERROR: Undefined instruction at pc=0x%08x\n", this.pc);
+        System.out.format("ERROR: Undefined instruction at pc=0x%08x%n", this.pc);
         this.nextpc = this.pc; // trigger stop condition
     }
     return this.nextpc == this.pc ? ExecuteState.STOPPED : ExecuteState.RUNNING;
