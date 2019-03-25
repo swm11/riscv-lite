@@ -1,7 +1,7 @@
 package uk.ac.cam.swm11.riscvlite;
 
 /** Helper functions to extract bits from an integer. */
-class bitextract {
+class BitExtract {
   public static int bitExtractInt(int bits, int lower, int upper) {
     //  assert(lower<=upper);
     return (bits >> lower) & ((1 << (upper - lower + 1)) - 1);

@@ -2,8 +2,8 @@ package uk.ac.cam.swm11.riscvlite;
 
 import java.io.IOException;
 
-class processor {
-  public enum executeState {
+class Processor {
+  public enum ExecuteState {
     STOPPED,
     RUNNING
   };
@@ -19,7 +19,7 @@ class processor {
     "t3", "t4", "t5", "t6"
   };
 
-  private enum instClass {
+  private enum InstClass {
     Rtype,
     Itype,
     Stype,
@@ -29,7 +29,7 @@ class processor {
     Udef
   };
 
-  private enum inst_t {
+  private enum InstT {
     UDEF,
     ADD,
     ADDI,
@@ -45,29 +45,29 @@ class processor {
   };
 
   // Decoded instruction type
-  private class decodedInst {
-    public instClass typ; // decoded instruction type
-    public inst_t inst; // decoded instruction
+  private class DecodedInst {
+    public InstClass typ; // decoded instruction type
+    public InstT inst; // decoded instruction
     public int imm; // decoded immediate operand
     public byte rd, rs1, rs2; // registers
     public byte opcode, funct3, funct7;
   }
 
   // Architectural state of the processor
-  private class archState {
+  private class ArchState {
     int pc, nextpc; // current and next program counter values
     int rf[]; // register file
   }
 
   // Storage for the memory and architectural state
-  private memory mem;
-  private archState archst;
+  private Memory mem;
+  private ArchState archst;
 
   /** Initialise memory and architectural state. */
   public void processor(int memsizebytes, String programfilepath, int startPC) throws IOException {
-    this.mem = new memory();
+    this.mem = new Memory();
     this.mem.memory(memsizebytes, programfilepath);
-    archst = new archState();
+    archst = new ArchState();
     archst.nextpc = startPC;
     archst.pc = -1; // value should never be looked at, so set to an invalid value
     archst.rf = new int[32];
@@ -77,105 +77,105 @@ class processor {
   }
 
   /** Decode an instruction. */
-  private decodedInst decode(int inst) {
-    decodedInst d = new decodedInst();
+  private DecodedInst decode(int inst) {
+    DecodedInst d = new DecodedInst();
     // Decode the fixed fields even if they are not needed for a particular instruction
-    d.opcode = bitextract.bitExtractByte(inst, 0, 6);
-    d.rd = bitextract.bitExtractByte(inst, 7, 11);
-    d.rs1 = bitextract.bitExtractByte(inst, 15, 19);
-    d.rs2 = bitextract.bitExtractByte(inst, 20, 24);
-    d.funct3 = bitextract.bitExtractByte(inst, 12, 14);
-    d.funct7 = bitextract.bitExtractByte(inst, 25, 31);
+    d.opcode = BitExtract.bitExtractByte(inst, 0, 6);
+    d.rd = BitExtract.bitExtractByte(inst, 7, 11);
+    d.rs1 = BitExtract.bitExtractByte(inst, 15, 19);
+    d.rs2 = BitExtract.bitExtractByte(inst, 20, 24);
+    d.funct3 = BitExtract.bitExtractByte(inst, 12, 14);
+    d.funct7 = BitExtract.bitExtractByte(inst, 25, 31);
     switch (d.opcode) {
       case 0b0110011: // R-type instructions (e.g. ADD)
-        d.typ = instClass.Rtype;
+        d.typ = InstClass.Rtype;
         d.imm = 0;
         switch ((d.funct7 << 3) | d.funct3) {
           case ((0b000000 << 3) | 0b000):
-            d.inst = inst_t.ADD;
+            d.inst = InstT.ADD;
             break;
           default:
-            d.inst = inst_t.UDEF;
+            d.inst = InstT.UDEF;
         }
         break;
 
       case 0b0010011: // I-type instructions (e.g. ADDI)
       case 0b0000011: // also load instructions
       case 0b1100111: // also JALR
-        d.typ = instClass.Itype;
-        d.imm = bitextract.bitExtractSignedInt(inst, 20, 31);
+        d.typ = InstClass.Itype;
+        d.imm = BitExtract.bitExtractSignedInt(inst, 20, 31);
         switch ((d.opcode << 3) | d.funct3) {
           case (0b0010011 << 3) | 0b000:
-            d.inst = inst_t.ADDI;
+            d.inst = InstT.ADDI;
             break;
           case (0b0000011 << 3) | 0b010:
-            d.inst = inst_t.LW;
+            d.inst = InstT.LW;
             break;
           case (0b1100111 << 3) | 0b000:
-            d.inst = inst_t.JALR;
+            d.inst = InstT.JALR;
             break;
           default:
-            d.inst = inst_t.UDEF;
+            d.inst = InstT.UDEF;
         }
         break;
       case 0b0100011: // S-type (store instructions)
-        d.typ = instClass.Stype;
-        d.imm = (bitextract.bitExtractSignedInt(inst, 25, 31) << 5) | d.rd;
+        d.typ = InstClass.Stype;
+        d.imm = (BitExtract.bitExtractSignedInt(inst, 25, 31) << 5) | d.rd;
         switch (d.funct3) {
           case 0b010:
-            d.inst = inst_t.SW;
+            d.inst = InstT.SW;
             break;
           default:
-            d.inst = inst_t.UDEF;
+            d.inst = InstT.UDEF;
         }
         break;
       case 0b0010111: // AUIPC
-        d.typ = instClass.Utype;
-        d.imm = bitextract.bitExtractInt(inst, 12, 31) << 12;
-        d.inst = inst_t.AUIPC;
+        d.typ = InstClass.Utype;
+        d.imm = BitExtract.bitExtractInt(inst, 12, 31) << 12;
+        d.inst = InstT.AUIPC;
         break;
       case 0b0110111: // LUI
-        d.typ = instClass.Utype;
-        d.imm = bitextract.bitExtractInt(inst, 12, 31) << 12;
-        d.inst = inst_t.LUI;
+        d.typ = InstClass.Utype;
+        d.imm = BitExtract.bitExtractInt(inst, 12, 31) << 12;
+        d.inst = InstT.LUI;
         break;
       case 0b1101111: // JAL (J-type)
-        d.typ = instClass.Jtype;
+        d.typ = InstClass.Jtype;
         d.imm =
-            (bitextract.bitExtractInt(inst, 21, 30) << 1)
-                | (bitextract.bitExtractInt(inst, 20, 20) << 11)
-                | (bitextract.bitExtractInt(inst, 12, 19) << 12)
-                | (bitextract.bitExtractSignedInt(inst, 31, 31) << 20);
-        d.inst = inst_t.JAL;
+            (BitExtract.bitExtractInt(inst, 21, 30) << 1)
+                | (BitExtract.bitExtractInt(inst, 20, 20) << 11)
+                | (BitExtract.bitExtractInt(inst, 12, 19) << 12)
+                | (BitExtract.bitExtractSignedInt(inst, 31, 31) << 20);
+        d.inst = InstT.JAL;
         break;
         //  B-type instrucitons
       case 0b1100011: // conditional branches
-        d.typ = instClass.Btype;
+        d.typ = InstClass.Btype;
         d.imm =
-            bitextract.bitExtractInt(inst, 8, 11) << 1
-                | bitextract.bitExtractInt(inst, 25, 30) << 5
-                | bitextract.bitExtractInt(inst, 7, 7) << 11
-                | bitextract.bitExtractSignedInt(inst, 31, 31) << 12;
+            BitExtract.bitExtractInt(inst, 8, 11) << 1
+                | BitExtract.bitExtractInt(inst, 25, 30) << 5
+                | BitExtract.bitExtractInt(inst, 7, 7) << 11
+                | BitExtract.bitExtractSignedInt(inst, 31, 31) << 12;
         switch (d.funct3) {
           case 0b100:
-            d.inst = inst_t.BLT;
+            d.inst = InstT.BLT;
             break;
           default:
-            d.inst = inst_t.UDEF;
+            d.inst = InstT.UDEF;
         }
         break;
 
       default:
-        d.typ = instClass.Udef;
-        d.inst = inst_t.UDEF;
+        d.typ = InstClass.Udef;
+        d.inst = InstT.UDEF;
         d.imm = 0;
     }
 
     return d;
   }
 
-  public executeState executeStep() {
-    decodedInst d;
+  public ExecuteState executeStep() {
+    DecodedInst d;
     // Move onto the next pc
     archst.pc = archst.nextpc;
     // Ensure register zero is always 0
@@ -219,15 +219,15 @@ class processor {
         archst.nextpc = archst.pc; // trigger stop condition
     }
 
-    return archst.nextpc == archst.pc ? executeState.STOPPED : executeState.RUNNING;
+    return archst.nextpc == archst.pc ? ExecuteState.STOPPED : ExecuteState.RUNNING;
   }
 
   /** Dump memory with instructions decoded. */
-  public void decodedump(memory mem, int lowerBound, int upperBound) {
+  public void decodedump(Memory mem, int lowerBound, int upperBound) {
     int a, m;
     for (a = lowerBound; a <= upperBound; a = a + 4) {
       m = this.mem.load(a);
-      decodedInst d = decode(m);
+      DecodedInst d = decode(m);
       System.out.format(
           "0x%04x: 0x%08x opcode=%s typ=%-5s inst=%-5s rd=%-4s rs1=%-4s rs2=%-4s imm=0x%08x=%d\n",
           a,
@@ -246,7 +246,7 @@ class processor {
 
   /** Report on instruction executed. */
   public void traceExecutedInstruction() {
-    decodedInst d;
+    DecodedInst d;
     d = decode(this.mem.load(archst.pc)); // fetch and decode instruction
     System.out.format(
         "pc=0x%08x inst=%5s rd=x%02d=%4s=%-8d rs1=%4s=%-8d rs2=%4s=%-8d imm=0x%08x=%d\n",

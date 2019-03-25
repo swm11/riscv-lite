@@ -2,11 +2,11 @@ package uk.ac.cam.swm11.riscvlite;
 
 import java.io.IOException;
 
-class jsim {
+class JSim {
   public static void main(String args[]) {
-    memory mem = new memory();
-    processor.executeState ps;
-    processor proc = new processor();
+    Memory mem = new Memory();
+    Processor.ExecuteState ps;
+    Processor proc = new Processor();
     try {
       // initialise processor and load program binary
       proc.processor(65 * 1024, "../fib/build/mem.bin", 0);
@@ -19,6 +19,6 @@ class jsim {
     do {
       ps = proc.executeStep();
       proc.traceExecutedInstruction();
-    } while (ps == processor.executeState.RUNNING);
+    } while (ps == Processor.ExecuteState.RUNNING);
   }
 }
