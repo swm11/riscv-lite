@@ -8,7 +8,7 @@ class Processor {
     RUNNING
   };
 
-  private final String[] regABInameStr = {
+  private static final String[] REG_AB_INAME_STR = {
     "zero", "ra", "sp", "gp",
     "tp", "t0", "t1", "t2",
     "fp", "s1", "a0", "a1",
@@ -236,9 +236,9 @@ class Processor {
               .replace(' ', '0'), // nasty hack to get exaclty 7 binary digits
           d.typ.name(),
           d.inst.name(),
-          regABInameStr[d.rd],
-          regABInameStr[d.rs1],
-          regABInameStr[d.rs2],
+          REG_AB_INAME_STR[d.rd],
+          REG_AB_INAME_STR[d.rs1],
+          REG_AB_INAME_STR[d.rs2],
           d.imm,
           d.imm);
     }
@@ -253,11 +253,11 @@ class Processor {
         archst.pc,
         d.inst.name(),
         d.rd,
-        regABInameStr[d.rd],
+        REG_AB_INAME_STR[d.rd],
         archst.rf[d.rd],
-        regABInameStr[d.rs1],
+        REG_AB_INAME_STR[d.rs1],
         archst.rf[d.rs1],
-        regABInameStr[d.rs2],
+        REG_AB_INAME_STR[d.rs2],
         archst.rf[d.rs2],
         d.imm,
         d.imm);
@@ -270,7 +270,7 @@ class Processor {
       System.out.format("--------------------STOPPED--------------------\nRegister map:\n");
       for (int r = 0; r < 32; r++) {
         System.out.format(
-            "  x%02d = %4s = 0x%08x = %d\n", r, regABInameStr[r], archst.rf[r], archst.rf[r]);
+            "  x%02d = %4s = 0x%08x = %d\n", r, REG_AB_INAME_STR[r], archst.rf[r], archst.rf[r]);
       }
     }
   }
