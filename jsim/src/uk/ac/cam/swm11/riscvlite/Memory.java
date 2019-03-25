@@ -15,10 +15,7 @@ class Memory {
   static Memory initialize(int memsizebytes, String filepath) throws IOException {
     // initialise the memory
     int memsizewords = memsizebytes / 4;
-    int[] mem = new int[memsizewords];
-    for (int a = 0; a < memsizewords; a++) {
-      mem[a] = 0;
-    }
+    int[] mem = new int[memsizewords]; // zero initialised
     System.out.format(
         "Memory size = %d words = %d bytes = %d KiB\n",
         mem.length, mem.length * 4, mem.length * 4 / 1024);
@@ -37,8 +34,8 @@ class Memory {
   }
 
   private boolean checkValidAddress(int byteaddress) {
-    boolean valid; // check:
-    valid =
+    // check:
+    boolean valid =
         ((byteaddress & 0x3) == 0) //  alignment requirement
             && ((byteaddress / 4) < this.mem.length) //  upper bound
             && (byteaddress >= 0); //  lower bound

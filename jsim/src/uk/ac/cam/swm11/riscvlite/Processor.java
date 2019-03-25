@@ -36,9 +36,8 @@ class Processor {
 
   /** Dump memory with instructions decoded. */
   void decodeDump(int lowerBound, int upperBound) {
-    int a, m;
-    for (a = lowerBound; a <= upperBound; a = a + 4) {
-      m = this.mem.load(a);
+    for (int a = lowerBound; a <= upperBound; a = a + 4) {
+      int m = this.mem.load(a);
       DecodedInst d = DecodedInst.decode(m);
       System.out.format(
           "0x%04x: 0x%08x opcode=%s typ=%-5s inst=%-5s rd=%-4s rs1=%-4s rs2=%-4s imm=0x%08x=%d\n",
