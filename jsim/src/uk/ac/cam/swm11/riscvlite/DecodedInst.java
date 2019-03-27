@@ -44,20 +44,20 @@ class DecodedInst {
     final byte opcode, funct3, funct7;
 
     FixedFields(int inst) {
-      this.opcode = BitExtract.bitExtractByte(inst, 0, 6);
-      this.rd = BitExtract.bitExtractByte(inst, 7, 11);
-      this.rs1 = BitExtract.bitExtractByte(inst, 15, 19);
-      this.rs2 = BitExtract.bitExtractByte(inst, 20, 24);
+      this.opcode = BitExtract.bitExtractByte(inst,  0,  6);
+      this.rd =     BitExtract.bitExtractByte(inst,  7, 11);
       this.funct3 = BitExtract.bitExtractByte(inst, 12, 14);
+      this.rs1 =    BitExtract.bitExtractByte(inst, 15, 19);
+      this.rs2 =    BitExtract.bitExtractByte(inst, 20, 24);
       this.funct7 = BitExtract.bitExtractByte(inst, 25, 31);
     }
   }
 
-  final InstClass typ; // decoded instruction type
-  final InstT inst; // decoded instruction
-  final int imm; // decoded immediate operand
-  final byte rd, rs1, rs2; // registers
-  final byte opcode, funct3, funct7;
+  final InstClass typ;                 // decoded instruction type
+  final InstT inst;                    // decoded instruction
+  final int imm;                       // decoded immediate operand
+  final byte rd, rs1, rs2;             // registers
+  final byte opcode, funct3, funct7;   // opcode and funct fields
 
   private DecodedInst(FixedFields fixedFields, InstClass typ, InstT inst) {
     this(fixedFields, typ, inst, 0);
@@ -124,8 +124,7 @@ class DecodedInst {
                 | (BitExtract.bitExtractInt(inst, 20, 20) << 11)
                 | (BitExtract.bitExtractInt(inst, 12, 19) << 12)
                 | (BitExtract.bitExtractSignedInt(inst, 31, 31) << 20));
-        //  B-type instrucitons
-      case 0b1100011: // conditional branches
+      case 0b1100011: // B-type instrucitons: conditional branches
         return new DecodedInst(
             fixedFields,
             InstClass.B_TYPE,
