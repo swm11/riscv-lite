@@ -14,10 +14,10 @@ J_SOURCE_PATH = ./src
 # Specify where are the source files .java
 J_SOURCE = $(J_SOURCE_FLAG) $(J_SOURCE_PATH)
 # Top class
-J_TOP = jsim
+J_TOP = uk.ac.cam.swm11.riscvlite.JSim
 
 # Identify source files
-SRC = $(wildcard $(J_SOURCE_PATH)/*.java)
+SRC = $(shell find $(J_SOURCE_PATH) -name *.java)
 
 # Création des fichiers .class correspondant
 # TMP = $(SRC:.java=.class)
