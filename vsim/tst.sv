@@ -61,14 +61,15 @@ module tst(output logic clk,
 		   d.fields.opcode,
 		   d.dec.typ,
 		   d.dec.inst);
-	  $display("%05t: funct7=%07B  rs2=%5s  rs1=%5s  funct3=%03B  rd=%5s  opcode=%07B",
+	  $display("%05t: funct7=%07B  rs2=%5s  rs1=%5s  funct3=%03B  rd=%5s  imm=0x%08x=%d",
 		   $time,
 		   d.fields.funct7,
 		   d.fields.rs2,
 		   d.fields.rs1,
 		   d.fields.funct3,
 		   d.fields.rd,
-		   d.fields.opcode);
+		   d.dec.imm,
+		   d.dec.imm);
        end
    
 endmodule // tst

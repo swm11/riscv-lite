@@ -64,3 +64,6 @@ typedef struct packed
      InstFixedFieldsT fields;
      decodeT dec;
   } decodedInstT;
+
+typedef enum { STOPPED, RUNNING } ExecuteStateT;
+
