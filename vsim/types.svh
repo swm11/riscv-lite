@@ -58,7 +58,7 @@ typedef struct packed
      InstT      inst;
      rvwordT    imm;
   } decodeT;
-		     
+             
 typedef struct packed
   {
      InstFixedFieldsT fields;

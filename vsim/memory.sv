@@ -22,13 +22,13 @@ module memory
 
    always_ff @(posedge clk)
      begin
-	assert(iaddr < (1<<MEM_WIDTH));
-	assert(daddr < (1<<MEM_WIDTH));
-	
-	idataout <= mem[iaddr];
-	ddataout <= mem[daddr];
-	if(dwe)
-	  mem[daddr] <= ddatain;
+        assert(iaddr < (1<<MEM_WIDTH));
+        assert(daddr < (1<<MEM_WIDTH));
+    
+        idataout <= mem[iaddr];
+        ddataout <= mem[daddr];
+        if(dwe)
+          mem[daddr] <= ddatain;
      end
 
 endmodule // memory

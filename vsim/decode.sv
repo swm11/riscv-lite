@@ -25,24 +25,24 @@ function automatic decodedInstT decode(rvwordT instr);
        decode.dec = decodeIType(decode.fields);
      7'b0100011: // S-type (store instructions)
        decode.dec = '{typ: S_TYPE,
-		      inst: decode.fields.funct3 == 3'b010 ? SW : UDEF,
-		      imm: imm_s_type};
+              inst: decode.fields.funct3 == 3'b010 ? SW : UDEF,
+              imm: imm_s_type};
      7'b0010111: // AUIPC
        decode.dec = '{typ: U_TYPE,
-		      inst: AUIPC,
-		      imm: imm_u_type};
+              inst: AUIPC,
+              imm: imm_u_type};
      7'b0110111: // LUI
        decode.dec = '{typ: U_TYPE,
-		      inst: LUI,
-		      imm: imm_u_type};
+              inst: LUI,
+              imm: imm_u_type};
      7'b1101111: // JAL (J-type)
        decode.dec = '{typ: J_TYPE,
-		      inst: JAL,
-		      imm: imm_uj_type};
+              inst: JAL,
+              imm: imm_uj_type};
       7'b1100011: // B-type instrucitons: conditional branches
        decode.dec = '{typ: B_TYPE,
-		      inst: decode.fields.funct3 == 3'b100 ? BLT: UDEF,
-		      imm: imm_sb_type};
+              inst: decode.fields.funct3 == 3'b100 ? BLT: UDEF,
+              imm: imm_sb_type};
      default:
        decode.dec = '{typ: UNDEFINED, inst: UDEF, imm: 32'bx};
    endcase // case {d.inst.opcode)
