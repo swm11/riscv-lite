@@ -1,4 +1,4 @@
-`include "types.svh"
+import types::*;
 
 module memory
   #(

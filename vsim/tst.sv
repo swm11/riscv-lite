@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-`include "types.svh"
+import types::*;
 
 module tst(output logic clk,
        output logic rst,

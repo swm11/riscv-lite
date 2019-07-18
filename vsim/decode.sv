@@ -1,4 +1,4 @@
-`include "types.svh"
+import types::*;
 
 //TODO: combine decode into one big table?
 //TODO: do muxing of immediates elsewhere?  Encode the mux input in the decode only?

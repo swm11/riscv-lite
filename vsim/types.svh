@@ -1,3 +1,5 @@
+package types;
+
 typedef logic [31:0] rvwordT;
 typedef logic [6:0]  opcodeT;
 typedef logic [6:0]  funct7T;
@@ -67,3 +69,4 @@ typedef struct packed
 
 typedef enum { STOPPED, RUNNING } ExecuteStateT;
 
+endpackage // types
