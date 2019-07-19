@@ -67,6 +67,11 @@ typedef struct packed
      decodeT dec;
   } decodedInstT;
 
-typedef enum { STOPPED, RUNNING } ExecuteStateT;
+typedef enum { EX_STOPPED, EX_RUNNING, EX_MEM } ExecuteStateT;
+
+typedef enum { EPOCH_INVALID, EPOCH_RED, EPOCH_GREEN } EpochT;
+
+typedef enum { MEM_INVALID, MEM_READ, MEM_WRITE } MemControlT;
+   
 
 endpackage // types
