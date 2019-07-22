@@ -12,15 +12,18 @@ module fetch#(parameter START_PC=0)
 	// from execute
 	input  rvwordT jumpPC,
 	input  EpochT jumpEpoch,
-	input  ExecuteStateT executeState, 		 
+	input  ExecuteStateT executeState
 	);
 
-   EpochT if_epoch
+   EpochT if_epoch;
    assign pc_epoch = (executeState == EX_RUNNING) ? if_epoch : EPOCH_INVALID;
 
    always_ff @(posedge clk or posedge rst)
 	 if(rst)
-	   pc <= START_PC;
+	   begin
+		  pc <= START_PC;
+		  if_epoch <= EPOCH_RED;
+	   end
 	 else
 	   if(jumpEpoch != EPOCH_INVALID)
 		 begin
@@ -31,8 +34,3 @@ module fetch#(parameter START_PC=0)
 		 pc <= pc+4;
 
 endmodule // fetch
-
-   
-	
-	
-	

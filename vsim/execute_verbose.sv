@@ -7,11 +7,11 @@ module execute
    input 	   rst,
    // decoded instruction in
    input 	   decodedInstT d,
-   input 	   EpochT d_epoch
+   input 	   EpochT d_epoch,
    // orders to instruction fetch
    output 	   rvwordT jumpPC,
    output 	   EpochT jumpEpoch,
-   output 	   ExecuteStateT executeState
+   output 	   ExecuteStateT executeState,
    // data memory interface
    output 	   MemControlT dmem_control,
    output 	   rvwordT dmem_addr,
@@ -22,9 +22,9 @@ module execute
 
    // registers
    rvwordT rf[0:31];  // register file
-
+   EpochT epoch;
+   
    // wires
-   rvwordT nextpc;
    rvwordT rf_rs1, rf_rs2;
    rvwordT writeBackValue;
    regT    writeBackReg;
@@ -32,61 +32,72 @@ module execute
    always_ff @(posedge clk or posedge rst)
 	 if(rst)
 	   begin
-		  pc <= startPc;
 		  rf[0] <= 0;
+		  epoch <= EPOCH_RED;
 	   end
 	 else
-	   begin
-		  pc <= nextpc;
-		  rf[writeBackReg] <= writeBackValue;
-	   end
-
+	   if(d_epoch == epoch)
+		 begin
+			if(jumpEpoch != EPOCH_INVALID)
+			  epoch <= jumpEpoch;
+			rf[writeBackReg] <= writeBackValue;
+		 end
+	   else
+		 $display("%05t: execute NOP since d_epoch=%s but epoch=%s",
+				  $time, d_epoch, epoch);
+   
    always_comb
 	 begin
-		nextpc = pc+4; // default next PC  // TODO: Fix since now forward requests to fetch
 		writeBackReg = X_zero;
 		writeBackValue = 0;
-		rf_rs1 = rf[d.rs1];
-		rf_rs2 = rf[d.rs2];
-
-		case(d.inst)
+		rf_rs1 = rf[d.fields.rs1];
+		rf_rs2 = rf[d.fields.rs2];
+		jumpEpoch = EPOCH_INVALID;
+		executeState = EX_RUNNING;
+		case(d.dec.inst)
 		  ADD:
 			begin
 			   writeBackValue = rf_rs1 + rf_rs2;
-			   writeBackReg = d.rd;
+			   writeBackReg = d.fields.rd;
 			end
 		  ADDI:
 			begin
-			   writeBackValue = rf_rs1 + d.imm;
-			   writeBackReg = d.rd;
+			   writeBackValue = rf_rs1 + d.dec.imm;
+			   writeBackReg = d.fields.rd;
 			end
 		  AUIPC:
 			begin
-			   writeBackValue = pc + d.imm;
-			   writeBackReg = d.rd;
+			   writeBackValue = d.pc + d.dec.imm;
+			   writeBackReg = d.fields.rd;
 			end
 		  LUI: 
 			begin
-			   writeBackValue = d.imm;
-			   writeBackReg = d.rd;
+			   writeBackValue = d.dec.imm;
+			   writeBackReg = d.fields.rd;
 			end
 		  BLT:
-			if(rf_rs1 < rf_rs2) nextpc <= pc + d.imm;
+			if(rf_rs1 < rf_rs2)
+			  begin
+				 jumpPC = d.pc + d.dec.imm;
+				 jumpEpoch = nextEpochColour(epoch);
+			  end
 		  JAL:
 			begin
-			   nextpc <= pc + d.imm;
-			   writeBackValue = pc + 4;
+			   jumpPC = d.pc + d.dec.imm;
+			   jumpEpoch = nextEpochColour(epoch);
+			   writeBackValue = d.pc + 4;
 			   writeBackReg = X_ra;
 			end
 		  JALR:
 			begin
-			   nextpc <= rf_rs1 + d.imm;
-			   writeBackValue = pc + 4;
+			   jumpPC = rf_rs1 + d.dec.imm;
+			   jumpEpoch = nextEpochColour(epoch);
+			   writeBackValue = d.pc + 4;
 			   writeBackReg = X_ra;
 			end
 		  // TODO: LW and SW
 		  default:
-			$display("ERROR: Undefined instruction at pc=0x%08x",pc);
+			$display("ERROR: Undefined instruction at pc=0x%08x",d.pc);
 		endcase
 	 end // always_comb
    

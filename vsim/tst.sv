@@ -12,9 +12,6 @@ module tst
 
 `include "decode.sv"
 
-   rvwordT pc;
-   EpochT pc_epoch;
-
    rvwordT ir; // instruction wires (from a register in the memory)
    EpochT ir_epoch; // instruction register epoch
 
@@ -46,7 +43,7 @@ module tst
 
    fetch
      #(
-	   .START_PC=0
+	   .START_PC(0)
 	   ) do_if
 	   (
 		.clk(clk),
@@ -61,7 +58,7 @@ module tst
 		);
 
    // instruction decode:
-   assign d = decode(ir);
+   assign d = decode(ir,pc);
 
    execute do_ex
 	 (

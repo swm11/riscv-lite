@@ -65,13 +65,18 @@ typedef struct packed
   {
      InstFixedFieldsT fields;
      decodeT dec;
+	 rvwordT pc;
   } decodedInstT;
 
 typedef enum { EX_STOPPED, EX_RUNNING, EX_MEM } ExecuteStateT;
 
-typedef enum { EPOCH_INVALID, EPOCH_RED, EPOCH_GREEN } EpochT;
-
 typedef enum { MEM_INVALID, MEM_READ, MEM_WRITE } MemControlT;
    
+typedef enum { EPOCH_INVALID, EPOCH_RED, EPOCH_GREEN } EpochT;
+
+function automatic EpochT nextEpochColour(EpochT currentEpoch);
+  return currentEpoch == EPOCH_RED ? EPOCH_GREEN : EPOCH_RED;
+endfunction // nextEpochColour
+												 
 
 endpackage // types
