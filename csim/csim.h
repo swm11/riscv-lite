@@ -52,9 +52,9 @@ typedef enum {Rtype=0,Itype=1,Stype=2,Btype=3,Utype=4,Jtype=5,Udef=6} instClass;
 
 static const char *instClassStr[] = {"Rtype","Itype","Stype","Btype","Utype","Jtype","Udef"};
 
-typedef enum {UDEF, ADD, ADDI, AUIPC, BLT, J, JAL, JALR, LW, MV, SW} inst_t;
+typedef enum {UDEF, ADD, ADDI, AUIPC, BLT, J, JAL, JALR, LUI, LW, MV, SW} inst_t;
 
-static const char *instStr[] = {"UDEF", "ADD", "ADDI", "AUIPC", "BLTU", "J", "JAL", "JALR", "LW", "MV", "SW"};
+static const char *instStr[] = {"UDEF", "ADD", "ADDI", "AUIPC", "BLTU", "J", "JAL", "JALR", "LUI", "LW", "MV", "SW"};
 
 
 typedef uint8_t   reg_t;

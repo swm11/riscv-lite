@@ -113,6 +113,11 @@ decode(binInst_t inst, decodedInst_t *d)
     d->imm = bitExtract(inst,12,31)<<12;
     d->inst = AUIPC;
     break;
+  case 0b0110111: // LUI 
+    d->typ = Utype;
+    d->imm = bitExtract(inst,12,31)<<12;
+    d->inst = LUI;
+    break;
   case 0b1101111: // JAL (J-type)
     d->typ = Jtype;
     d->imm =
@@ -179,7 +184,7 @@ processor(uint32_t *mem, int memsizewords)
   uint32_t oldpc;
   int32_t  rf[32]; // register file
   uint32_t ir; // instruction register
-  uint32_t addr; // temporary address value
+  uint32_t addr, rawAddr; // temporary address values
   int r;
 
   for(r=0; r<32; r++)
@@ -214,6 +219,9 @@ processor(uint32_t *mem, int memsizewords)
       pc = rf[d.rs1] + d.imm;
       rf[1] = oldpc+4; // x1 = ra (return address)
       break;
+    case LUI:
+      rf[d.rd] = d.imm;
+      break;
     case LW:
       addr = (rf[d.rs1] + d.imm)/4; // shift/div does byte-to-word addressing fix (TODO: clean up?)
       if((addr>=0) && (addr<memsizewords))
@@ -222,11 +230,16 @@ processor(uint32_t *mem, int memsizewords)
 	printf("ERROR: address %d is out of range\n",addr);
       break;
     case SW:
-      addr = (rf[d.rs1] + d.imm)/4;
-      if((addr>=0) && (addr<memsizewords))
-	mem[addr] = rf[d.rs2];
+      rawAddr = rf[d.rs1] + d.imm;
+      addr = rawAddr/4;
+      if(rawAddr == 0xf0000000) { // magic output device detected
+        printf("**********************************************************************\n");
+        printf("* RESULT = 0x%08x = %d\n", rf[d.rs2], rf[d.rs2]);
+        printf("**********************************************************************\n");
+      } else if((addr>=0) && (addr<memsizewords))
+        mem[addr] = rf[d.rs2];
       else
-	printf("ERROR: address %d is out of range\n",addr);
+        printf("ERROR: address 0x%08x or %d is out of range\n",addr,addr);
       break;
     default:
       printf("ERROR: Undefined instruction at pc=0x%08x\n",oldpc);
