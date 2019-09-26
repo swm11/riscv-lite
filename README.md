@@ -23,6 +23,10 @@ $ make
 $ ./csim
 ```
 
-The vsim simulator does not currently support memory operations.
+The vsim simulator does not currently support memory operations, which causes runtime errors. To make it execute the following commands:
+```sh
+$ cd vsim
+$ ./runsim.sh
+```
 
 The ecad-labs simulator does not currently have any make instructions.
