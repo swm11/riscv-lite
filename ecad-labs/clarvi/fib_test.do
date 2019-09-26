@@ -29,6 +29,8 @@ vlog clarvi_avalon.sv
 vlog bram.sv
 vlog clarvi_sim.sv
 
+vsim work.clarvi_sim -t ns -voptargs=+acc=npr
+
 add wave -position insertpoint \
 sim:/clarvi_sim/clock
 
