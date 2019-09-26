@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 `timescale 1ns/10ps
 
 module dual_port_bram #(
-    parameter INIT_FILE = "mem.hex",
+    parameter INIT_FILE = "../../fib/build/mem.txt",
     parameter ADDRESS_WIDTH = 12,
     parameter BYTE_WIDTH = 8,
     parameter BYTES_PER_WORD = 4
