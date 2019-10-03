@@ -46,11 +46,11 @@ class ArchState {
         break;
       case JAL: // jump and link (pc + immediate)
         this.nextpc = this.pc + d.imm;
-        this.rf[1] = this.pc + 4; // x1 = ra (return address)
+        this.rf[d.rd] = this.pc + 4; // x1 = ra (return address)
         break;
       case JALR: // jump and link (register + immediate)
         this.nextpc = this.rf[d.rs1] + d.imm;
-        this.rf[1] = this.pc + 4; // x1 = ra (return address)
+        this.rf[d.rd] = this.pc + 4; // x1 = ra (return address)
         break;
       case LW: // load word
         this.rf[d.rd] = mem.load(this.rf[d.rs1] + d.imm);
